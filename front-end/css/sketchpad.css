@@ -1,0 +1,36 @@
+#sketchpad-interface {
+    /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.button{
+    margin-left: 9em;
+}
+@media only screen and (max-width: 600px) {
+    .button {
+        margin-left: 5em;
+    }
+}
+
+#sketchpad {
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+    width: 80%;
+    border:2px solid #888;
+    border-radius:4px;
+    position:relative;
+}
+
+canvas {
+image-rendering: optimizeSpeed;             // Older versions of FF
+image-rendering: -moz-crisp-edges;          // FF 6.0+
+image-rendering: -webkit-optimize-contrast; // Webkit (non standard naming)
+image-rendering: -o-crisp-edges;            // OS X & Windows Opera (12.02+)
+image-rendering: crisp-edges;               // Possible future browsers.
+-ms-interpolation-mode: nearest-neighbor;   // IE (non standard naming)
+}
