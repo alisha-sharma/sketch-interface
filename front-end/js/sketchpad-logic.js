@@ -1,7 +1,7 @@
 let canvas, canvasContext; //variables to reference canvas and canvas context
 let mouseX, mouseY, mouseDown = 0; //variables to keep track of mouse positions
 let touchX, touchY = 0; //variables to keep track of the touch positions
-let lastX, lastY = -1; //variables to keep track of last X, Y positions
+let offsetX, offsetY; //variables holding current canvas offset position
 
 let points = [];
 let touchLines = [];
@@ -11,16 +11,17 @@ $("document").ready(function () {
     //get canvas element
     canvas = document.getElementById('sketchpad');
     //get 2d drawing context for the canvas
-    var rect = canvas.getBoundingClientRect();
+    let rect = canvas.getBoundingClientRect();
     canvas.width = rect.width;
     canvas.height = rect.height;
     if (canvas.getContext)
         canvasContext = canvas.getContext('2d');
-    canvasContext.webkitImageSmoothingEnabled = false;
-    canvasContext.mozImageSmoothingEnabled = false;
-    canvasContext.imageSmoothingEnabled = false;
     //check valid context and add event listener
     if (canvasContext) {
+        canvasContext.webkitImageSmoothingEnabled = false;
+        canvasContext.mozImageSmoothingEnabled = false;
+        canvasContext.imageSmoothingEnabled = false;
+
         //add event listener for mouse events
         canvas.addEventListener('mousedown', sketchpad_mouseDown, false);
         canvas.addEventListener('mousemove', sketchpad_mouseMove, false);
@@ -35,21 +36,17 @@ $("document").ready(function () {
 // Keep track of the mouse button being pressed and draw a dot at current location
 function sketchpad_mouseDown() {
     mouseDown = 1;
+    // Draw a filled line
+    canvasContext.beginPath();
+    // move to current mouse position
+    canvasContext.moveTo(mouseX, mouseY);
+
+    let touchPoint = { };
+    touchPoint.X = mouseX;
+    touchPoint.Y = mouseY;
+    points.push(touchPoint);
+
     drawLine(canvasContext, mouseX, mouseY, 4);
-}
-
-// Keep track of the mouse button being released
-function sketchpad_mouseUp() {
-    mouseDown = 0;
-
-    var touchLine = { };
-    touchLine.points = points;
-    touchLine.canvasWidth = canvas.width;
-    touchLine.canvasHeight = canvas.height;
-    touchLines.push(touchLine);
-    // Reset lastX and lastY to -1 to indicate that they are now invalid, since we have lifted the "pen"
-    lastX = -1;
-    lastY = -1;
 }
 
 // Keep track of the mouse position and draw a dot if mouse button is currently pressed
@@ -58,9 +55,8 @@ function sketchpad_mouseMove(e) {
     getMousePos(e);
 
     // Draw a dot if the mouse button is currently being pressed
-    if (mouseDown == 1) {
-        var touchPoint = { };
-        var touchLine = { };
+    if (mouseDown === 1) {
+        let touchPoint = { };
         touchPoint.X = mouseX;
         touchPoint.Y = mouseY;
         points.push(touchPoint);
@@ -68,14 +64,28 @@ function sketchpad_mouseMove(e) {
     }
 }
 
+// Keep track of the mouse button being released
+function sketchpad_mouseUp() {
+    mouseDown = 0;
+    // close path when mouse is released
+    canvasContext.closePath();
+
+    let touchLine = { };
+    touchLine.points = points;
+    touchLine.canvasWidth = canvas.width;
+    touchLine.canvasHeight = canvas.height;
+    touchLines.push(touchLine);
+    // reset current line points
+    points = [];
+}
+
 // Get the current mouse position relative to the top-left of the canvas
 function getMousePos(e) {
-    if (!e)
-        var e = event;
+    if (!e) return;
 
     if (e.offsetX) {
-        mouseX = e.offsetX;
-        mouseY = e.offsetY;
+         mouseX = e.offsetX * canvas.width / canvas.clientWidth | 0;
+         mouseY = e.offsetY * canvas.height / canvas.clientHeight | 0;
     } else if (e.layerX) {
         mouseX = e.layerX;
         mouseY = e.layerY;
@@ -120,7 +130,7 @@ function getTouchPos(e) {
 
     if (e.touches) {
         if (e.touches.length === 1) { // Only deal with one finger
-            var touch = e.touches[0]; // Get the information for finger #1
+            let touch = e.touches[0]; // Get the information for finger #1
             touchX = touch.pageX - touch.target.offsetLeft;
             touchY = touch.pageY - touch.target.offsetTop;
         }
@@ -129,28 +139,12 @@ function getTouchPos(e) {
 
 function drawLine(canvasContext, x, y, size) {
 
-    // If lastX is not set, set lastX and lastY to the current position
-    if (lastX === -1) {
-        lastX = x;
-        lastY = y;
-    }
-    // RGB values set to 0 for black color, and 255 alpha (completely opaque)
-    r = 0;
-    g = 0;
-    b = 0;
-    a = 255;
-
-    // Select a fill style
-    canvasContext.strokeStyle = "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
+    let alpha = 255;
+    // set rgb values to 0 for black color
+    canvasContext.strokeStyle = "rgba(" + 0 + "," + 0 + "," + 0 + "," + (alpha / 255) + ")";
 
     // Set the line "cap" style to round, so lines at different angles can join into each other
     canvasContext.lineCap = "round";
-
-    // Draw a filled line
-    canvasContext.beginPath();
-
-    // First, move to the old (previous) position
-    canvasContext.moveTo(lastX, lastY);
 
     // Now draw a line to the current touch/pointer position
     canvasContext.lineTo(x, y);
@@ -158,21 +152,20 @@ function drawLine(canvasContext, x, y, size) {
     // Set the line thickness and draw the line
     canvasContext.lineWidth = size;
     canvasContext.stroke();
-
-    canvasContext.closePath();
-    // Update the last position to reference the current position
-    lastX = x;
-    lastY = y;
 }
 
 // Clear the canvas context using the canvas width and height
 function clearCanvas(canvas, canvasContext) {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+
+    // reset line points and all drawn lines in the canvas
+    points = [];
+    touchLines = [];
 }
 
 // save Image
 function saveImage(canvas, canvasContext) {
-    var link = document.createElement('a');
+    let link = document.createElement('a');
     link.textContent = 'download image';
     link.href = canvas.toDataURL('image/png', 1.0);
     link.download = "1.png";
@@ -183,40 +176,36 @@ function saveImage(canvas, canvasContext) {
 
 // Clear the canvas context and redraw image
 function redrawImage(canvas, canvasContext) {
+    //clear canvas first
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+
     touchLines.forEach((function (line) {
-        lastX = -1;
-        lastY = -1;
+        if(line.points.length === 0) return;
+        let firstPoint = line.points[0];
+        canvasContext.beginPath();
+        // first move to initial point
+        canvasContext.moveTo(firstPoint.X, firstPoint.Y);
         let scaleX = canvas.width / line.canvasWidth;
         let scaleY = canvas.height / line.canvasHeight;
         let touchPoints = line.points;
         touchPoints.forEach((function (p){
             drawLine(canvasContext, p.X * scaleX, p.Y * scaleY, 4);
         }));
+
+        canvasContext.closePath();
     }));
 }
 
+// function to recalculate the canvas offsets
+function reOffset(){
+    let bounds =canvas.getBoundingClientRect();
+    offsetX = bounds.left;
+    offsetY = bounds.top;
+}
+
 function saveResizeAndRedisplay() {
+    reOffset();
     if(canvas != null && canvasContext !=null)
         redrawImage(canvas, canvasContext);
-    // console.log("here");
-    // // save the canvas content as imageURL
-    // var data = canvas.toDataURL();
-    // console.log(data);
-    // // resize the canvas
-    // //get canvas element
-    // canvas = document.getElementById('sketchpad');
-    // //get 2d drawing context for the canvas
-    // var rect = canvas.getBoundingClientRect();
-    // canvas.width = rect.width;
-    // canvas.height = rect.height;
-    //
-    // // scale and redraw the canvas content
-    // var img = new Image();
-    // img.onload = function () {
-    //     canvasContext.drawImage(img, 0, 0, canvas.width, canvas.height);
-    //     console.log("image width:" + img.width + "height : " + img.height);
-    // }
-    // img.src = data;
 }
 
