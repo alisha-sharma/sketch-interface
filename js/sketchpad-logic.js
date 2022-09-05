@@ -1,13 +1,12 @@
-let canvas, canvasContext; //variables to reference canvas and canvas context
-let mouseX, mouseY, mouseDown = 0; //variables to keep track of mouse positions
-let touchX, touchY = 0; //variables to keep track of the touch positions
-let offsetX, offsetY; //variables holding current canvas offset position
+let canvas, canvasContext; //letiables to reference canvas and canvas context
+let mouseX, mouseY, mouseDown = 0; //letiables to keep track of mouse positions
+let touchX, touchY = 0; //letiables to keep track of the touch positions
+let offsetX, offsetY; //letiables holding current canvas offset position
 let size = 4;
 let points = [];
 let touchLines = [];
-
-
-
+const OUT_SIZE = 256;
+const PADDING = 8;
 
 $("document").ready(function () {
 
@@ -25,6 +24,8 @@ $("document").ready(function () {
         canvasContext = canvas.getContext('2d');
     //check valid context and add event listener
     if (canvasContext) {
+        canvasContext.fillStyle = "white";
+        canvasContext.fillRect(0, 0, canvas.width, canvas.height);
         canvasContext.webkitImageSmoothingEnabled = false;
         canvasContext.mozImageSmoothingEnabled = false;
         canvasContext.imageSmoothingEnabled = false;
@@ -49,7 +50,7 @@ function sketchpad_mouseDown() {
     // move to current mouse position
     canvasContext.moveTo(mouseX, mouseY);
 
-    let touchPoint = { };
+    let touchPoint = {};
     touchPoint.X = mouseX;
     touchPoint.Y = mouseY;
     points.push(touchPoint);
@@ -64,7 +65,7 @@ function sketchpad_mouseMove(e) {
 
     // Draw a dot if the mouse button is currently being pressed
     if (mouseDown === 1) {
-        let touchPoint = { };
+        let touchPoint = {};
         touchPoint.X = mouseX;
         touchPoint.Y = mouseY;
         points.push(touchPoint);
@@ -78,7 +79,7 @@ function sketchpad_mouseUp() {
     // close path when mouse is released
     canvasContext.closePath();
 
-    let touchLine = { };
+    let touchLine = {};
     touchLine.points = points;
     touchLine.canvasWidth = canvas.width;
     touchLine.canvasHeight = canvas.height;
@@ -92,8 +93,8 @@ function getMousePos(e) {
     if (!e) return;
 
     if (e.offsetX) {
-         mouseX = e.offsetX * canvas.width / canvas.clientWidth | 0;
-         mouseY = e.offsetY * canvas.height / canvas.clientHeight | 0;
+        mouseX = e.offsetX * canvas.width / canvas.clientWidth | 0;
+        mouseY = e.offsetY * canvas.height / canvas.clientHeight | 0;
     } else if (e.layerX) {
         mouseX = e.layerX;
         mouseY = e.layerY;
@@ -110,7 +111,7 @@ function sketchpad_touchStart() {
     // move to current mouse position
     canvasContext.moveTo(mouseX, mouseY);
 
-    let touchPoint = { };
+    let touchPoint = {};
     touchPoint.X = touchX;
     touchPoint.Y = touchY;
     points.push(touchPoint);
@@ -127,7 +128,7 @@ function sketchpad_touchEnd() {
     // lastY = -1;
     canvasContext.closePath();
 
-    let touchLine = { };
+    let touchLine = {};
     touchLine.points = points;
     touchLine.canvasWidth = canvas.width;
     touchLine.canvasHeight = canvas.height;
@@ -141,7 +142,7 @@ function sketchpad_touchMove(e) {
     // Update the touch co-ordinates
     getTouchPos(e);
 
-    let touchPoint = { };
+    let touchPoint = {};
     touchPoint.X = touchX;
     touchPoint.Y = touchY;
     points.push(touchPoint);
@@ -158,7 +159,7 @@ function sketchpad_touchMove(e) {
 // "target.offsetTop" to get the correct values in relation to the top left of the canvas.
 function getTouchPos(e) {
     if (!e)
-        var e = event;
+        e = event;
 
     if (e.touches) {
         if (e.touches.length === 1) { // Only deal with one finger
@@ -188,7 +189,7 @@ function drawLine(canvasContext, x, y) {
 
 // Clear the canvas context using the canvas width and height
 function clearCanvas(canvas, canvasContext) {
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 
     // reset line points and all drawn lines in the canvas
     points = [];
@@ -197,22 +198,80 @@ function clearCanvas(canvas, canvasContext) {
 
 // save Image
 function saveImage(canvas, canvasContext) {
-    let link = document.createElement('a');
-    link.textContent = 'download image';
-    link.href = canvas.toDataURL('image/png', 1.0);
-    link.download = "1.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const setX = new Set();
+    const setY = new Set();
+    touchLines.forEach((function (line, i) {
+        if (line.points.length === 0) return;
+        let touchPoints = line.points;
+        touchPoints.forEach((function (p) {
+            setX.add(p.X);
+            setY.add(p.Y);
+        }));
+    }));
+
+    const minX = Math.min(...setX);
+    const minY = Math.min(...setY);
+    const maxX = Math.max(...setX);
+    const maxY = Math.max(...setY);
+
+    const imgWidth = maxX - minX;
+    const imgHeight = maxY - minY;
+    let imageData = canvasContext.getImageData(minX, minY, imgWidth, imgHeight);
+
+    let myCanvas = document.createElement('canvas');
+    myCanvas.width = OUT_SIZE;
+    myCanvas.height = OUT_SIZE;
+
+    let myContext = myCanvas.getContext("2d");
+    myContext.fillStyle = "white";
+    myContext.fillRect(0, 0, OUT_SIZE, OUT_SIZE);
+
+    //maintaining aspect ratio
+    let wrh = imgWidth / imgHeight;
+    let newWidth = myCanvas.width;
+    let newHeight = newWidth / wrh;
+
+    if (newHeight > myCanvas.height) {
+        newHeight = myCanvas.height;
+        newWidth = newHeight * wrh;
+    }
+
+    let xOffset = newWidth < myCanvas.width ? ((myCanvas.width - newWidth) / 2) : 0;
+    let yOffset = newHeight < myCanvas.height ? ((myCanvas.height - newHeight) / 2) : 0;
+
+    let img = imagedata_to_image(imageData);
+    img.onload = function () {
+        // drawImage the img on the canvas
+        myContext.drawImage(img, xOffset + PADDING, yOffset + PADDING, newWidth - PADDING * 2, newHeight - PADDING * 2);
+        let link = document.createElement('a');
+        link.textContent = 'download image';
+        link.href = myCanvas.toDataURL('image/png', 1.0);
+        link.download = "1.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+
+function imagedata_to_image(imagedata) {
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext('2d');
+    canvas.width = imagedata.width;
+    canvas.height = imagedata.height;
+    ctx.putImageData(imagedata, 0, 0);
+
+    let image = new Image();
+    image.src = canvas.toDataURL();
+    return image;
 }
 
 // Clear the canvas context and redraw image
 function redrawImage(canvas, canvasContext) {
     //clear canvas first
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 
     touchLines.forEach((function (line) {
-        if(line.points.length === 0) return;
+        if (line.points.length === 0) return;
         let firstPoint = line.points[0];
         canvasContext.beginPath();
         // first move to initial point
@@ -220,7 +279,7 @@ function redrawImage(canvas, canvasContext) {
         let scaleX = canvas.width / line.canvasWidth;
         let scaleY = canvas.height / line.canvasHeight;
         let touchPoints = line.points;
-        touchPoints.forEach((function (p){
+        touchPoints.forEach((function (p) {
             drawLine(canvasContext, p.X * scaleX, p.Y * scaleY);
         }));
 
@@ -229,15 +288,17 @@ function redrawImage(canvas, canvasContext) {
 }
 
 // function to recalculate the canvas offsets
-function reOffset(){
-    let bounds =canvas.getBoundingClientRect();
+function reOffset() {
+    let bounds = canvas.getBoundingClientRect();
     offsetX = bounds.left;
     offsetY = bounds.top;
 }
 
 function saveResizeAndRedisplay() {
     reOffset();
-    if(canvas != null && canvasContext !=null)
+    if (canvas != null && canvasContext != null)
         redrawImage(canvas, canvasContext);
 }
+
+
 
