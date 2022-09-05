@@ -2,11 +2,18 @@ let canvas, canvasContext; //variables to reference canvas and canvas context
 let mouseX, mouseY, mouseDown = 0; //variables to keep track of mouse positions
 let touchX, touchY = 0; //variables to keep track of the touch positions
 let offsetX, offsetY; //variables holding current canvas offset position
-
+let size = 4;
 let points = [];
 let touchLines = [];
 
+
+
+
 $("document").ready(function () {
+
+    $("#line-width").bind('keyup mouseup', function () {
+        size = $(this).val();
+    });
     $(window).resize(saveResizeAndRedisplay);
     //get canvas element
     canvas = document.getElementById('sketchpad');
@@ -30,6 +37,7 @@ $("document").ready(function () {
         // add event listener for touch events
         canvas.addEventListener('touchstart', sketchpad_touchStart, false);
         canvas.addEventListener('touchmove', sketchpad_touchMove, false);
+        canvas.addEventListener('touchend', sketchpad_touchEnd, false);
     }
 });
 
@@ -46,7 +54,7 @@ function sketchpad_mouseDown() {
     touchPoint.Y = mouseY;
     points.push(touchPoint);
 
-    drawLine(canvasContext, mouseX, mouseY, 4);
+    drawLine(canvasContext, mouseX, mouseY);
 }
 
 // Keep track of the mouse position and draw a dot if mouse button is currently pressed
@@ -60,7 +68,7 @@ function sketchpad_mouseMove(e) {
         touchPoint.X = mouseX;
         touchPoint.Y = mouseY;
         points.push(touchPoint);
-        drawLine(canvasContext, mouseX, mouseY, 4);
+        drawLine(canvasContext, mouseX, mouseY);
     }
 }
 
@@ -97,7 +105,17 @@ function sketchpad_touchStart() {
     // Update the touch co-ordinates
     getTouchPos();
 
-    drawLine(canvasContext, touchX, touchY, 4);
+    // Draw a filled line
+    canvasContext.beginPath();
+    // move to current mouse position
+    canvasContext.moveTo(mouseX, mouseY);
+
+    let touchPoint = { };
+    touchPoint.X = touchX;
+    touchPoint.Y = touchY;
+    points.push(touchPoint);
+
+    drawLine(canvasContext, touchX, touchY);
 
     // Prevents an additional mousedown event being triggered
     event.preventDefault();
@@ -105,16 +123,30 @@ function sketchpad_touchStart() {
 
 function sketchpad_touchEnd() {
     // Reset lastX and lastY to -1 to indicate that they are now invalid, since we have lifted the "pen"
-    lastX = -1;
-    lastY = -1;
+    // lastX = -1;
+    // lastY = -1;
+    canvasContext.closePath();
+
+    let touchLine = { };
+    touchLine.points = points;
+    touchLine.canvasWidth = canvas.width;
+    touchLine.canvasHeight = canvas.height;
+    touchLines.push(touchLine);
+    // reset current line points
+    points = [];
 }
 
 // Draw something and prevent the default scrolling when touch movement is detected
 function sketchpad_touchMove(e) {
     // Update the touch co-ordinates
     getTouchPos(e);
+
+    let touchPoint = { };
+    touchPoint.X = touchX;
+    touchPoint.Y = touchY;
+    points.push(touchPoint);
     // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
-    drawLine(canvasContext, touchX, touchY, 4);
+    drawLine(canvasContext, touchX, touchY);
 
     // Prevent a scrolling action as a result of this touchmove triggering.
     event.preventDefault();
@@ -137,7 +169,7 @@ function getTouchPos(e) {
     }
 }
 
-function drawLine(canvasContext, x, y, size) {
+function drawLine(canvasContext, x, y) {
 
     let alpha = 255;
     // set rgb values to 0 for black color
@@ -189,7 +221,7 @@ function redrawImage(canvas, canvasContext) {
         let scaleY = canvas.height / line.canvasHeight;
         let touchPoints = line.points;
         touchPoints.forEach((function (p){
-            drawLine(canvasContext, p.X * scaleX, p.Y * scaleY, 4);
+            drawLine(canvasContext, p.X * scaleX, p.Y * scaleY);
         }));
 
         canvasContext.closePath();

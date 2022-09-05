@@ -9,10 +9,11 @@
 }
 .button{
     margin-left: 9em;
+    font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 400px) {
     .button {
-        margin-left: 5em;
+        margin-left: 2em;
     }
 }
 
@@ -24,6 +25,10 @@
     border:2px solid #888;
     border-radius:4px;
     position:relative;
+}
+
+.btn-section{
+    font-family: Raleway, HelveticaNeue, serif;
 }
 
 canvas {
