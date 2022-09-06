@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="./css/sketchpad.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
     <script src="./js/sketchpad-logic.js" type="text/javascript"></script>
 </head>
@@ -30,7 +30,7 @@
             <div class="mt-3 button">
                 <div class="col-12 mb-3">
                     <label for="line-width">Line Width: </label>
-                    <input id="line-width" type="number" value="4" id="line-width">
+                    <input id="line-width" type="number" value="4">
                 </div>
                 <div>
                     <button class="col-md-4 btn btn-outline-secondary mb-2" id="clearButton" onclick="clearCanvas(canvas,canvasContext);"> Clear SketchPad</button>

@@ -123,9 +123,6 @@ function sketchpad_touchStart() {
 }
 
 function sketchpad_touchEnd() {
-    // Reset lastX and lastY to -1 to indicate that they are now invalid, since we have lifted the "pen"
-    // lastX = -1;
-    // lastY = -1;
     canvasContext.closePath();
 
     let touchLine = {};
@@ -196,11 +193,27 @@ function clearCanvas(canvas, canvasContext) {
     touchLines = [];
 }
 
+function storeImage(dataURL) {
+    $.ajax({
+        type: "POST",
+        url: "../php/store.php",
+        data: {
+            imgBase64: dataURL
+        },
+        success: function(res) {
+            // do nothing
+        },
+        error: function (error) {
+            alert(error);
+        }
+    });
+}
+
 // save Image
 function saveImage(canvas, canvasContext) {
     const setX = new Set();
     const setY = new Set();
-    touchLines.forEach((function (line, i) {
+    touchLines.forEach((function (line) {
         if (line.points.length === 0) return;
         let touchPoints = line.points;
         touchPoints.forEach((function (p) {
@@ -243,13 +256,8 @@ function saveImage(canvas, canvasContext) {
     img.onload = function () {
         // drawImage the img on the canvas
         myContext.drawImage(img, xOffset + PADDING, yOffset + PADDING, newWidth - PADDING * 2, newHeight - PADDING * 2);
-        let link = document.createElement('a');
-        link.textContent = 'download image';
-        link.href = myCanvas.toDataURL('image/png', 1.0);
-        link.download = "1.png";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        let dataURL = myCanvas.toDataURL();
+        storeImage(dataURL);
     }
 }
 
