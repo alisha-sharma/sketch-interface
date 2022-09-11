@@ -40,7 +40,58 @@ $("document").ready(function () {
         canvas.addEventListener('touchmove', sketchpad_touchMove, false);
         canvas.addEventListener('touchend', sketchpad_touchEnd, false);
     }
+
+    let sketch = document.getElementById("sketch");
+    sketch.classList.add("d-none");
+
+    $('#closeModal').click(function() {
+        $('#userInfo').modal('hide');
+    });
+
+
+    $("#userDetail").on("submit", function (e) {
+        e.preventDefault();
+        if($("#name").val().trim().length !== 0){
+            submitUserName();
+        }
+    });
 });
+
+function submitUserName() {
+    $.ajax({
+        type: 'POST',
+        url: '../php/userInfo.php',
+        data: {
+            name: $("#name").val()
+        },
+        success: function (res) {
+            console.log(res);
+            let modalClose = document.getElementById('closeModal');
+            modalClose.click();
+
+            let sketchElement = document.getElementById("sketch");
+            sketchElement.classList.remove("d-none");
+
+            let flashDiv = document.getElementById("flashMessage");
+            flashDiv.classList.remove("d-none");
+
+            let startButton = document.getElementById("button-start");
+            startButton.classList.add("d-none");
+
+            setTimeout(function() {
+                flashDiv.classList.add("d-none");
+            }, 3000);
+
+        },
+        error: function () {
+            let element = document.getElementById("flashMessage");
+            element.textContent = "Failed to add user";
+
+            let sketchElement = document.getElementById("sketch");
+            sketchElement.classList.remove("d-none");
+        }
+    });
+}
 
 // Keep track of the mouse button being pressed and draw a dot at current location
 function sketchpad_mouseDown() {
@@ -200,8 +251,11 @@ function storeImage(dataURL) {
         data: {
             imgBase64: dataURL
         },
-        success: function(res) {
-            // do nothing
+        success: function(success) {
+         if(success){
+             alert("Image saved");
+             clearCanvas(canvas, canvasContext);
+         }
         },
         error: function (error) {
             alert(error);
@@ -213,6 +267,7 @@ function storeImage(dataURL) {
 function saveImage(canvas, canvasContext) {
     const setX = new Set();
     const setY = new Set();
+    if(touchLines.length === 0) return;
     touchLines.forEach((function (line) {
         if (line.points.length === 0) return;
         let touchPoints = line.points;

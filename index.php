@@ -6,9 +6,12 @@
     <title>SketchPad Interface</title>
 
     <link rel="stylesheet" href="./css/sketchpad.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+            crossorigin="anonymous"></script>
     <script src="./js/sketchpad-logic.js" type="text/javascript"></script>
 </head>
 <body>
@@ -21,9 +24,22 @@
         You can draw UML class diagram elements like rectangles and arrows on the sketchpad and save them.
         The image data of the UML class diagram component will be used as training data for the sketch classifier.
     </div>
-    <div class="row">
+    <div class="draw-button">
+        <button type="button" id="button-start" class="btn btn-warning" data-toggle="modal" data-target="#userInfo">
+            <span class="center">Start Drawing</span>
+        </button>
+    </div>
+
+    <div class="mt-2 alert alert-success fade show text-center d-none" id="flashMessage" role="alert">
+        <strong>User Name successfully added.</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="row" id="sketch">
         <div class="col-11 mt-4" id="sketchpad-interface">
-            <canvas id="sketchpad"> </canvas>
+            <canvas id="sketchpad"></canvas>
         </div>
         <!--    </div>-->
         <div class="row btn-section">
@@ -33,13 +49,54 @@
                     <input id="line-width" type="number" value="4">
                 </div>
                 <div>
-                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="clearButton" onclick="clearCanvas(canvas,canvasContext);"> Clear SketchPad</button>
-                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="saveButton" onclick="saveImage(canvas,canvasContext);"> Save Image</button>
+                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="clearButton"
+                            onclick="clearCanvas(canvas,canvasContext);"> Clear SketchPad
+                    </button>
+                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="saveButton"
+                            onclick="saveImage(canvas,canvasContext);"> Save Image
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div id="userInfo" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-name"> User Info</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                        <input type="hidden" name="_method" value="PUT">
+                       <form class="form" id="userDetail" action="" method="post" accept-charset="UTF-8">
+                            <div class="form-group mt-2">
+                                <label class="control-label">Name *</label>
+                                <div>
+                                    <input type="text" class="form-control input-lg"
+                                           name="name" id="name" required>
+                                </div>
+                            </div>
+                            <div class="form-group mt-2">
+                                <div>
+                                    <button type="submit" class="btn btn-outline-success submit" name="submit">Submit</button>
+                                </div>
+                            </div>
+                       </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id= "closeModal" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal End -->
 </div>
+<script>
+
+</script>
 </body>
 </html>
 

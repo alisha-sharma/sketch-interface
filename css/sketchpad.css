@@ -31,6 +31,17 @@
     font-family: Raleway, HelveticaNeue, serif;
 }
 
+.draw-button{
+  margin: auto;
+    display: flex;
+    justify-content: center;
+    padding-top: 2rem;
+}
+
+button span.center{
+    color: #fff;
+}
+
 canvas {
 image-rendering: optimizeSpeed;             // Older versions of FF
 image-rendering: -moz-crisp-edges;          // FF 6.0+
