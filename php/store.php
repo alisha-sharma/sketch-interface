@@ -7,9 +7,10 @@ function store()
     $img = str_replace('data:image/png;base64,', '', $img);
     $img = str_replace(' ', '+', $img);
     $fileData = base64_decode($img);
+    $shape = $_POST['shape'];
 
     if(isset($_SESSION['userName']) && !empty($_SESSION['userName'])) {
-        $userSpecificFolder = UPLOAD_DIR  . $_SESSION['userName'];
+        $userSpecificFolder = UPLOAD_DIR  . $_SESSION['userName'] . '/'  . $shape;
         if (!file_exists($userSpecificFolder)) {
             mkdir($userSpecificFolder, 0777, true);
         }

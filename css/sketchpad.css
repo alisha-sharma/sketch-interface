@@ -42,6 +42,22 @@ button span.center{
     color: #fff;
 }
 
+.alert {
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 1em;
+    width: 90%;
+    line-height:15px;
+    z-index: 1;
+}
+
+#instructions{
+    width: 80%;
+}
+
 canvas {
 image-rendering: optimizeSpeed;             // Older versions of FF
 image-rendering: -moz-crisp-edges;          // FF 6.0+

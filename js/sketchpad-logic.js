@@ -1,14 +1,23 @@
-let canvas, canvasContext; //letiables to reference canvas and canvas context
-let mouseX, mouseY, mouseDown = 0; //letiables to keep track of mouse positions
-let touchX, touchY = 0; //letiables to keep track of the touch positions
-let offsetX, offsetY; //letiables holding current canvas offset position
+let canvas, canvasContext; //variables to reference canvas and canvas context
+let mouseX, mouseY, mouseDown = 0; //variables to keep track of mouse positions
+let touchX, touchY = 0; //variables to keep track of the touch positions
+let offsetX, offsetY; //variables holding current canvas offset position
 let size = 4;
 let points = [];
 let touchLines = [];
 const OUT_SIZE = 256;
 const PADDING = 8;
+let shapes = []
+let currentShape = "";
+let counterMap = {};
+let target = 2;
 
 $("document").ready(function () {
+
+    counterMap["rectangle"] = 0;
+    counterMap["line"] = 0;
+    counterMap["inheritance"] = 0;
+    counterMap["composition"] = 0;
 
     $("#line-width").bind('keyup mouseup', function () {
         size = $(this).val();
@@ -44,18 +53,32 @@ $("document").ready(function () {
     let sketch = document.getElementById("sketch");
     sketch.classList.add("d-none");
 
-    $('#closeModal').click(function() {
+    $('#closeModal').click(function () {
         $('#userInfo').modal('hide');
     });
 
 
     $("#userDetail").on("submit", function (e) {
         e.preventDefault();
-        if($("#name").val().trim().length !== 0){
+        if ($("#name").val().trim().length !== 0) {
             submitUserName();
         }
     });
 });
+
+function GenerateInstruction() {
+    shapes = Object.keys(counterMap);
+    let element = document.getElementById("shape");
+    if(shapes.length === 0){
+        element.textContent = "You have successfully drawn all the elements";
+        element.classList.remove("alert-primary");
+        element.classList.add("alert-success");
+    }
+    else{
+        currentShape = shapes[Math.floor(Math.random() * shapes.length)];
+        element.textContent = "Draw a " + currentShape;
+    }
+}
 
 function submitUserName() {
     $.ajax({
@@ -78,17 +101,20 @@ function submitUserName() {
             let startButton = document.getElementById("button-start");
             startButton.classList.add("d-none");
 
-            setTimeout(function() {
+            let imageDescription = document.getElementById("image-description");
+            imageDescription.classList.remove("d-none");
+
+            GenerateInstruction();
+
+            setTimeout(function () {
                 flashDiv.classList.add("d-none");
-            }, 3000);
+                document.getElementById("instructions").classList.remove("d-none");
+            }, 1500);
 
         },
         error: function () {
             let element = document.getElementById("flashMessage");
             element.textContent = "Failed to add user";
-
-            let sketchElement = document.getElementById("sketch");
-            sketchElement.classList.remove("d-none");
         }
     });
 }
@@ -249,13 +275,28 @@ function storeImage(dataURL) {
         type: "POST",
         url: "../php/store.php",
         data: {
-            imgBase64: dataURL
+            imgBase64: dataURL,
+            shape: currentShape
         },
-        success: function(success) {
-         if(success){
-             alert("Image saved");
-             clearCanvas(canvas, canvasContext);
-         }
+        success: function (success) {
+            if (success) {
+                let element = document.getElementById(currentShape);
+                let counter = counterMap[currentShape];
+                if (element) {
+                    counterMap[currentShape] = counter + 1;
+                    element.textContent = counterMap[currentShape];
+                }
+                if(counterMap[currentShape] === target){
+                    let parentElement = element.closest(".bg-primary");
+                    if(parentElement){
+                        parentElement.classList.remove("bg-primary");
+                        parentElement.classList.add("bg-success");
+                    }
+                    delete counterMap[currentShape];
+                }
+                clearCanvas(canvas, canvasContext);
+                GenerateInstruction();
+            }
         },
         error: function (error) {
             alert(error);
@@ -267,7 +308,7 @@ function storeImage(dataURL) {
 function saveImage(canvas, canvasContext) {
     const setX = new Set();
     const setY = new Set();
-    if(touchLines.length === 0) return;
+    if (touchLines.length === 0) return;
     touchLines.forEach((function (line) {
         if (line.points.length === 0) return;
         let touchPoints = line.points;
@@ -277,10 +318,15 @@ function saveImage(canvas, canvasContext) {
         }));
     }));
 
-    const minX = Math.min(...setX);
-    const minY = Math.min(...setY);
-    const maxX = Math.max(...setX);
-    const maxY = Math.max(...setY);
+    let minX = Math.min(...setX);
+    let minY = Math.min(...setY);
+    let maxX = Math.max(...setX);
+    let maxY = Math.max(...setY);
+
+    minX = Math.max(0, minX - 1);
+    minY = Math.max(0, minY - 1);
+    maxX = Math.min(canvas.width, maxX + 1);
+    maxY = Math.min(canvas.height, maxY + 1);
 
     const imgWidth = maxX - minX;
     const imgHeight = maxY - minY;

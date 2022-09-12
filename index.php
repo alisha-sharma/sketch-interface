@@ -30,15 +30,44 @@
         </button>
     </div>
 
-    <div class="mt-2 alert alert-success fade show text-center d-none" id="flashMessage" role="alert">
+    <div class="mt-2 mb-4 alert alert-success fade show text-center d-none" id="flashMessage" role="alert">
         <strong>User Name successfully added.</strong>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
 
+    <div class="mt-2 row col-md-6 offset-md-3 d-none" id="image-description">
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Rectangle <img class="img-fluid" src="./img/rectangle.png" alt="rectangle" style="height:3rem">
+                <span class="badge bg-primary rounded-pill"> <span id="rectangle">0</span> of 100 Done</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                 Line <img class="img-fluid" src="./img/line.png" alt="rectangle" style="height:3rem">
+                <span class="badge bg-primary rounded-pill"> <span id="line">0</span> of 100 Done</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Inheritance <img class="img-fluid" src="./img/inheritance.png" alt="rectangle" style="height:3rem">
+                <span class="badge bg-primary rounded-pill"> <span id="inheritance">0</span>  of 100 Done</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Composition <img class="img-fluid" src="./img/composition.png" alt="rectangle" style="height:3rem">
+                <span class="badge bg-primary rounded-pill"> <span id="composition">0</span> of 100 Done</span>
+            </li>
+        </ul>
+    </div>
+
     <div class="row" id="sketch">
-        <div class="col-11 mt-4" id="sketchpad-interface">
+        <div class="row d-none" id="instructions">
+            <div class="col-md-6 offset-md-4">
+                <div class="mt-4 alert alert-primary fade show text-center" role="alert" id="shape">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 mt-4" id="sketchpad-interface">
             <canvas id="sketchpad"></canvas>
         </div>
         <!--    </div>-->
