@@ -58,6 +58,39 @@ button span.center{
     width: 80%;
 }
 
+.footer {
+    position: relative;
+    left: 0;
+    bottom: 0;
+    margin-top: 2em;
+    width: 100%;
+    background-color: #dc3545;
+    color: white;
+    text-align: center;
+    line-height: 1.5em;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.flex-wrapper {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.login-text{
+    float: right;
+    margin-right: 2em;
+}
+
 canvas {
 image-rendering: optimizeSpeed;             // Older versions of FF
 image-rendering: -moz-crisp-edges;          // FF 6.0+
