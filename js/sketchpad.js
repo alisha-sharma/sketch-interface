@@ -235,7 +235,6 @@ function drawLine(canvasContext, x, y) {
 // Clear the canvas context using the canvas width and height
 function clearCanvas(canvas, canvasContext) {
     canvasContext.fillRect(0, 0, canvas.width, canvas.height);
-
     // reset line points and all drawn lines in the canvas
     points = [];
     touchLines = [];
@@ -247,7 +246,8 @@ function storeImage(dataURL) {
         url: "../php/store.php",
         data: {
             imgBase64: dataURL,
-            shape: currentShape
+            shape: currentShape,
+            touchlines: touchLines
         },
         success: function (success) {
             if (success) {

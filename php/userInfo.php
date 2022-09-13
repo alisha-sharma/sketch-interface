@@ -1,8 +1,8 @@
 <?php
 const UPLOAD_DIR = '../storage/';
+session_start();
 function getUserName()
 {
-    session_start();
     $_SESSION['userName']=$_POST['name'];
     $_SESSION['target']=$_POST['target'];
     $name = $_POST['name'];

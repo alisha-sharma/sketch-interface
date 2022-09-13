@@ -1,8 +1,8 @@
 <?php
 const UPLOAD_DIR = '../storage/';
-function store()
+session_start();
+function storeImage()
 {
-    session_start();
     $img = $_POST['imgBase64'];
     $img = str_replace('data:image/png;base64,', '', $img);
     $img = str_replace(' ', '+', $img);
@@ -22,5 +22,18 @@ function store()
     } else echo false;
 }
 
-store();
+function storePixels()
+{
+    $filePath = UPLOAD_DIR . $_SESSION['userName'] . '/' . $_SESSION['userName'] . '_data.txt';
+    $file = fopen($filePath, "a") or die("Unable to open file!");
+    $touchlines = $_POST['touchlines'];
+    if (count($touchlines) == 0) return;
+    $touchlines[0]["shape"] = $_POST['shape'];
+    $content = json_encode(array('touchline' => $touchlines));
+    fwrite($file, $content . "\n");
+    fclose($file);
+}
+
+storeImage();
+storePixels();
 
