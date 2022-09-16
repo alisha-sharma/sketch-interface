@@ -3,7 +3,7 @@
     <?php
     session_start();
     if (isset($_SESSION['userName']) && isset($_SESSION['target'])) {
-        header('Location:../draw.php');
+        header('Location: ./draw.php');
     }
     ?>
 </script>

@@ -60,9 +60,9 @@ $("document").ready(function () {
     $("#logoutButton").on('click', function () {
         $.ajax({
             type: "GET",
-            url: "../php/logout.php",
+            url: "./php/logout.php",
             success: function () {
-                window.location.href = "../index.php";
+                window.location.href = "./index.php";
             },
             error: function (error) {
                 alert(error);
@@ -87,7 +87,7 @@ function GenerateInstruction() {
 }
 
 function redrawElement(){
- window.location.href = "../draw.php";
+ window.location.href = "./draw.php";
 }
 
 // Keep track of the mouse button being pressed and draw a dot at current location
@@ -243,7 +243,7 @@ function clearCanvas(canvas, canvasContext) {
 function storeImage(dataURL) {
     $.ajax({
         type: "POST",
-        url: "../php/store.php",
+        url: "./php/store.php",
         data: {
             imgBase64: dataURL,
             shape: currentShape,

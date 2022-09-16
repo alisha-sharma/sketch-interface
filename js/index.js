@@ -15,7 +15,7 @@ $("document").ready(function () {
 function submitUserName() {
     $.ajax({
         type: 'POST',
-        url: '../php/userInfo.php',
+        url: './php/userInfo.php',
         data: {
             name: $("#name").val(),
             target: $("#target").val()

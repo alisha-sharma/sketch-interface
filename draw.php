@@ -3,14 +3,14 @@
     <?php
     session_start();
     if (!isset($_SESSION['userName']) && !isset($_SESSION['target'])) {
-        header('Location:../index.php');
+        header('Location:./index.php');
     }
     $target = $_SESSION['target'];
     $name = $_SESSION['userName'];
     ?>
     let target = '<?php echo $target ?>';
 </script>
-<script src="../js/sketchpad.js" type="text/javascript"></script>
+<script src="./js/sketchpad.js" type="text/javascript"></script>
 <div class="container-fluid">
     <div class="h4 pb-2 mt-4 mb-4 text-danger border-bottom border-danger text-center">
         SketchPad Interface - Data Collection of UML class diagram components
