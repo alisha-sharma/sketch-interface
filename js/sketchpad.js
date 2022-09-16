@@ -2,7 +2,7 @@ let canvas, canvasContext; //variables to reference canvas and canvas context
 let mouseX, mouseY, mouseDown = 0; //variables to keep track of mouse positions
 let touchX, touchY = 0; //variables to keep track of the touch positions
 let offsetX, offsetY; //variables holding current canvas offset position
-let size = 4;
+let size = 3;
 let points = [];
 let touchLines = [];
 const OUT_SIZE = 256;
@@ -10,20 +10,18 @@ const PADDING = 8;
 let shapes = []
 let currentShape = "";
 let counterMap = {};
+let MIN_TARGET = 5;
 
 function InitializeElementMap() {
     counterMap["rectangle"] = 0;
-    counterMap["line"] = 0;
+    counterMap["reference"] = 0;
     counterMap["inheritance"] = 0;
     counterMap["composition"] = 0;
+    counterMap["attribute"] = 0;
     GenerateInstruction();
 }
 
 function InitializeCanvasElement() {
-    //for changing stroke size
-    $("#line-width").bind('keyup mouseup', function () {
-        size = $(this).val();
-    });
     $(window).resize(saveResizeAndRedisplay);
     //get canvas element
     canvas = document.getElementById('sketchpad');
@@ -82,7 +80,7 @@ function GenerateInstruction() {
         currentShape = " ";
     } else {
         currentShape = shapes[Math.floor(Math.random() * shapes.length)];
-        element.textContent = "Draw a " + currentShape;
+        element.textContent = "Draw " + MIN_TARGET + " " + currentShape + "(s).";
     }
 }
 
@@ -259,6 +257,7 @@ function storeImage(dataURL) {
                     element.textContent = counterMap[currentShape];
                 }
 
+                clearCanvas(canvas, canvasContext);
                 if (counterMap[currentShape] === parseInt(target)) {
                     let parentElement = element.closest(".bg-primary");
                     if (parentElement) {
@@ -266,9 +265,12 @@ function storeImage(dataURL) {
                         parentElement.classList.add("bg-success");
                     }
                     delete counterMap[currentShape];
+                    GenerateInstruction();
                 }
-                clearCanvas(canvas, canvasContext);
-                GenerateInstruction();
+                else if((counterMap[currentShape] === MIN_TARGET) ||
+                    ((counterMap[currentShape] > MIN_TARGET) && (counterMap[currentShape] % MIN_TARGET) === 0)){
+                    GenerateInstruction();
+                }
             }
         },
         error: function (error) {

@@ -17,8 +17,7 @@ function submitUserName() {
         type: 'POST',
         url: './php/userInfo.php',
         data: {
-            name: $("#name").val(),
-            target: $("#target").val()
+            name: $("#name").val()
         },
         success: function (res) {
 

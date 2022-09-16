@@ -2,7 +2,7 @@
 <script type="text/javascript">
     <?php
     session_start();
-    if (isset($_SESSION['userName']) && isset($_SESSION['target'])) {
+    if (isset($_SESSION['userName'])) {
         header('Location: ./draw.php');
     }
     ?>
@@ -48,13 +48,6 @@
                                 <div>
                                     <input type="text" class="form-control input-lg"
                                            name="name" id="name" required>
-                                </div>
-                            </div>
-                            <div class="form-group mt-2">
-                                <label class="control-label">How many elements each you would like to draw? *</label>
-                                <div>
-                                    <input type="number" class="form-control input-lg"
-                                           name="target" id="target" min="" required>
                                 </div>
                             </div>
                             <div class="form-group mt-2">

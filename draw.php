@@ -2,10 +2,10 @@
 <script type="text/javascript">
     <?php
     session_start();
-    if (!isset($_SESSION['userName']) && !isset($_SESSION['target'])) {
+    if (!isset($_SESSION['userName'])) {
         header('Location:./index.php');
     }
-    $target = $_SESSION['target'];
+    $target = 50;
     $name = $_SESSION['userName'];
     ?>
     let target = '<?php echo $target ?>';
@@ -24,62 +24,75 @@
         You can draw UML class diagram elements like rectangles and arrows on the sketchpad and save them.
         The image data of the UML class diagram component will be used as training data for the sketch classifier.
     </div>
-    <div class="mt-2 row col-md-6 offset-md-3" id="image-description">
-        <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                Rectangle <img class="img-fluid" src="./img/rectangle.png" alt="rectangle" style="height:3rem">
-                <span class="badge bg-primary rounded-pill"> <span id="rectangle">0</span> of <?php echo $target ?> Done</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                Line <img class="img-fluid" src="./img/line.png" alt="rectangle" style="height:3rem">
-                <span class="badge bg-primary rounded-pill"> <span
-                            id="line">0</span> of <?php echo $target ?> Done</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                Inheritance <img class="img-fluid" src="./img/inheritance.png" alt="rectangle" style="height:3rem">
-                <span class="badge bg-primary rounded-pill"> <span id="inheritance">0</span>  of <?php echo $target ?> Done</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                Composition <img class="img-fluid" src="./img/composition.png" alt="rectangle" style="height:3rem">
-                <span class="badge bg-primary rounded-pill"> <span id="composition">0</span> of <?php echo $target ?> Done</span>
-            </li>
-        </ul>
-    </div>
-
     <div class="row" id="sketch">
-        <div class="row " id="instructions">
-            <div class="col-md-6 offset-md-4">
+        <div class="row col-7 left-side " id="instructions">
+            <div class="col-md-5 offset-md-2">
                 <div class="mt-4 alert alert-primary fade show text-center" role="alert" id="shape">
 
                 </div>
             </div>
-            <div class="mt-2 col-md-4 offset-md-6">
-                <button class="btn-sm btn-info mb-2 d-none" id="reDraw"
+            <div class="mt-2 col-md-4 offset-md-4">
+                <button class="btn-sm btn-info d-none" id="reDraw"
                         onclick="redrawElement();"> Draw Again
                 </button>
             </div>
         </div>
 
-        <div class="col-12 mt-4" id="sketchpad-interface">
-            <canvas id="sketchpad"></canvas>
-        </div>
-
-        <div class="row btn-section">
-            <div class="mt-3 button">
-                <div class="col-12 mb-3">
-                    <label for="line-width">Line Width: </label>
-                    <input id="line-width" type="number" value="4">
-                </div>
-                <div>
-                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="clearButton"
-                            onclick="clearCanvas(canvas,canvasContext);"> Clear SketchPad
-                    </button>
-                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="saveButton"
-                            onclick="saveImage(canvas,canvasContext);"> Save Image
-                    </button>
+        <div class="row mt-4" style="display: flex">
+            <div class="col-9 left-side" id="sketchpad-interface">
+                    <canvas id="sketchpad"></canvas>
+                <div class="row btn-section">
+                    <div class="mt-3 button">
+                        <div>
+                            <button class="col-md-4 btn btn-outline-secondary mb-2" id="clearButton"
+                                    onclick="clearCanvas(canvas,canvasContext);"> Clear SketchPad
+                            </button>
+                            <button class="col-md-4 btn btn-outline-secondary mb-2" id="saveButton"
+                                    onclick="saveImage(canvas,canvasContext);"> Save Image
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <br style="clear:both;"/>
+            <div class="col-3 right-side" id="image-description" style="margin-right: 0rem !important">
+                    <ul class="list-group list-items">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Rectangle <img class="img-fluid" src="./img/rectangle.png" alt="rectangle">
+                            <span class="badge bg-primary rounded-pill"> <span id="rectangle">0 </span> / <?php echo $target ?> Done</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Reference <img class="img-responsive" src="./img/reference.svg" alt="reference">
+                            <span class="badge bg-primary rounded-pill"> <span
+                                        id="reference">0</span> /  <?php echo $target ?> Done</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Inheritance <img class="img-fluid" src="./img/Inheritance.svg" alt="inheritance" style="">
+                            <span class="badge bg-primary rounded-pill"> <span id="inheritance">0</span>  / <?php echo $target ?> Done</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Composition <img class="img-fluid" src="./img/composition.svg" alt="composition" style="">
+                            <span class="badge bg-primary rounded-pill"> <span id="composition">0</span> / <?php echo $target ?> Done</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Attribute <i class="fa fa-plus"></i>
+                            <span class="badge bg-primary rounded-pill"> <span id="attribute">0</span> / <?php echo $target ?> Done</span>
+                        </li>
+                    </ul>
+            </div>
         </div>
+<!--        <div class="row btn-section">-->
+<!--            <div class="mt-3 button">-->
+<!--                <div>-->
+<!--                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="clearButton"-->
+<!--                            onclick="clearCanvas(canvas,canvasContext);"> Clear SketchPad-->
+<!--                    </button>-->
+<!--                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="saveButton"-->
+<!--                            onclick="saveImage(canvas,canvasContext);"> Save Image-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </div>
 <?php include("./php/footer.php"); ?>

@@ -4,7 +4,7 @@ session_start();
 function getUserName()
 {
     $_SESSION['userName']=$_POST['name'];
-    $_SESSION['target']=$_POST['target'];
+    // $_SESSION['target']=$_POST['target'];
     $name = $_POST['name'];
     if ($name) {
         if (!file_exists(UPLOAD_DIR)) {
