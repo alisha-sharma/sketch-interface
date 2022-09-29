@@ -58,7 +58,7 @@
             <div class="col-3 right-side" id="image-description" style="margin-right: 0rem !important">
                     <ul class="list-group list-items">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Rectangle <img class="img-fluid" src="./img/rectangle.png" alt="rectangle">
+                            Rectangle <img class="img-fluid" src="./img/square.png" alt="rectangle">
                             <span class="badge bg-primary rounded-pill"> <span id="rectangle">0 </span> / <?php echo $target ?> Done</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
