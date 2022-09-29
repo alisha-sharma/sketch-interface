@@ -1,7 +1,7 @@
 <?php
 const UPLOAD_DIR = '../storage/';
 session_start();
-function getUserName()
+function storeUserName()
 {
     $_SESSION['userName']=$_POST['name'];
     // $_SESSION['target']=$_POST['target'];
@@ -13,10 +13,9 @@ function getUserName()
         $userSpecificFolder = UPLOAD_DIR . '/' . $name;
         if (!file_exists($userSpecificFolder)) {
             mkdir($userSpecificFolder, 0777, true);
-            echo $name;
         }
     }
 }
 
-getUserName();
+storeUserName();
 header('Location: ../draw.php');

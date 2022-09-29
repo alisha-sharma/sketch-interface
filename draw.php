@@ -1,6 +1,13 @@
 <?php include("./php/header.php"); ?>
 <script type="text/javascript">
     <?php
+
+    function countFilesPerCategory($category)
+    {
+        $userName = $_SESSION['userName'];
+        return count(glob("./storage/{$userName}/{$category}/" . "*.png"));
+    }
+
     session_start();
     if (!isset($_SESSION['userName'])) {
         header('Location:./index.php');
@@ -40,7 +47,7 @@
 
         <div class="row mt-4" style="display: flex">
             <div class="col-9 left-side" id="sketchpad-interface">
-                    <canvas id="sketchpad"></canvas>
+                <canvas id="sketchpad"></canvas>
                 <div class="row btn-section">
                     <div class="mt-3 button">
                         <div>
@@ -56,43 +63,47 @@
             </div>
             <br style="clear:both;"/>
             <div class="col-3 right-side" id="image-description" style="margin-right: 0rem !important">
-                    <ul class="list-group list-items">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Rectangle <img class="img-fluid" src="./img/square.png" alt="rectangle">
-                            <span class="badge bg-primary rounded-pill"> <span id="rectangle">0 </span> / <?php echo $target ?> Done</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Reference <img class="img-responsive" src="./img/reference.svg" alt="reference">
-                            <span class="badge bg-primary rounded-pill"> <span
-                                        id="reference">0</span> /  <?php echo $target ?> Done</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Inheritance <img class="img-fluid" src="./img/Inheritance.svg" alt="inheritance" style="">
-                            <span class="badge bg-primary rounded-pill"> <span id="inheritance">0</span>  / <?php echo $target ?> Done</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Composition <img class="img-fluid" src="./img/composition.svg" alt="composition" style="">
-                            <span class="badge bg-primary rounded-pill"> <span id="composition">0</span> / <?php echo $target ?> Done</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Attribute <i class="fa fa-plus"></i>
-                            <span class="badge bg-primary rounded-pill"> <span id="attribute">0</span> / <?php echo $target ?> Done</span>
-                        </li>
-                    </ul>
+                <ul class="list-group list-items">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Rectangle <img class="img-fluid" src="./img/square.png" alt="rectangle">
+                        <span class="badge bg-primary rounded-pill"> <span
+                                    id="rectangle"> <?php echo countFilesPerCategory('rectangle') ?> </span> / <?php echo $target ?> Done</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Reference <img class="img-responsive" src="./img/reference.svg" alt="reference">
+                        <span class="badge bg-primary rounded-pill"> <span
+                                    id="reference"> <?php echo countFilesPerCategory('reference') ?> </span> /  <?php echo $target ?> Done</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Inheritance <img class="img-fluid" src="./img/Inheritance.svg" alt="inheritance" style="">
+                        <span class="badge bg-primary rounded-pill"> <span
+                                    id="inheritance"> <?php echo countFilesPerCategory('inheritance') ?> </span>  / <?php echo $target ?> Done</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Composition <img class="img-fluid" src="./img/composition.svg" alt="composition" style="">
+                        <span class="badge bg-primary rounded-pill"> <span
+                                    id="composition"> <?php echo countFilesPerCategory('composition') ?> </span> / <?php echo $target ?> Done</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Attribute <i class="fa fa-plus"></i>
+                        <span class="badge bg-primary rounded-pill"> <span
+                                    id="attribute"> <?php echo countFilesPerCategory('attribute') ?> </span> / <?php echo $target ?> Done</span>
+                    </li>
+                </ul>
             </div>
         </div>
-<!--        <div class="row btn-section">-->
-<!--            <div class="mt-3 button">-->
-<!--                <div>-->
-<!--                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="clearButton"-->
-<!--                            onclick="clearCanvas(canvas,canvasContext);"> Clear SketchPad-->
-<!--                    </button>-->
-<!--                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="saveButton"-->
-<!--                            onclick="saveImage(canvas,canvasContext);"> Save Image-->
-<!--                    </button>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
+        <!--        <div class="row btn-section">-->
+        <!--            <div class="mt-3 button">-->
+        <!--                <div>-->
+        <!--                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="clearButton"-->
+        <!--                            onclick="clearCanvas(canvas,canvasContext);"> Clear SketchPad-->
+        <!--                    </button>-->
+        <!--                    <button class="col-md-4 btn btn-outline-secondary mb-2" id="saveButton"-->
+        <!--                            onclick="saveImage(canvas,canvasContext);"> Save Image-->
+        <!--                    </button>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
     </div>
 </div>
 <?php include("./php/footer.php"); ?>
