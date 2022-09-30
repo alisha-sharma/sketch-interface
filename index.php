@@ -25,7 +25,7 @@
         </div>
 
         <div class="mt-2 mb-4 alert alert-success fade show text-center d-none" id="flashMessage" role="alert">
-            <strong>User Name successfully added.</strong>
+            <strong>Login success.</strong>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>

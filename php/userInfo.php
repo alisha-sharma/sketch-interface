@@ -18,4 +18,3 @@ function storeUserName()
 }
 
 storeUserName();
-header('Location: ../draw.php');

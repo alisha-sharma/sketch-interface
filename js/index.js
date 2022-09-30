@@ -20,7 +20,6 @@ function submitUserName() {
             name: $("#name").val()
         },
         success: function (res) {
-
             let modalClose = document.getElementById('closeModal');
             if (modalClose != null) modalClose.click();
 
@@ -30,10 +29,10 @@ function submitUserName() {
 
                 setTimeout(function () {
                     flashDiv.classList.add("d-none");
-                }, 1500);
+                    window.location.href = './draw.php';
+                }, 1000);
             }
 
-            window.location.href = './draw.php';
         },
         error: function () {
             let element = document.getElementById("flashMessage");

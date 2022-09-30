@@ -9,17 +9,9 @@ const OUT_SIZE = 256;
 const PADDING = 8;
 let shapes = []
 let currentShape = "";
-let counterMap = {};
 let MIN_TARGET = 5;
+let FINAL_TARGET = 250;
 
-function InitializeElementMap() {
-    counterMap["rectangle"] = 0;
-    counterMap["reference"] = 0;
-    counterMap["inheritance"] = 0;
-    counterMap["composition"] = 0;
-    counterMap["attribute"] = 0;
-    GenerateInstruction();
-}
 
 function InitializeCanvasElement() {
     $(window).resize(saveResizeAndRedisplay);
@@ -52,8 +44,7 @@ function InitializeCanvasElement() {
 }
 
 $("document").ready(function () {
-
-    InitializeElementMap();
+    GenerateInstruction();
     InitializeCanvasElement();
     $("#logoutButton").on('click', function () {
         $.ajax({
@@ -69,19 +60,45 @@ $("document").ready(function () {
     });
 });
 
-function GenerateInstruction() {
+function getNextElement(){
+    totalFiles %= 25;
+    let index = totalFiles / 5;
+    if(index < 1 ) return "rectangle";
+    else if(index < 2) return "reference";
+    else if(index < 3) return "inheritance";
+    else if(index < 4) return "composition";
+    else return "attribute";
+}
+
+function markCompletedElement() {
     shapes = Object.keys(counterMap);
+    shapes.forEach((shape, i) => {
+        let element = document.getElementById(shape);
+        if (counterMap[shape] === parseInt(target)) {
+            let parentElement = element.closest(".bg-primary");
+            if (parentElement) {
+                parentElement.classList.remove("bg-primary");
+                parentElement.classList.add("bg-success");
+            }
+        }
+    });
+}
+
+function GenerateInstruction() {
     let element = document.getElementById("shape");
-    if (shapes.length === 0) {
+    if (totalFiles === FINAL_TARGET) {
         element.textContent = "You have successfully drawn all the elements";
         element.classList.remove("alert-primary");
         element.classList.add("alert-success");
-        document.getElementById("reDraw").classList.remove("d-none");
+        //document.getElementById("reDraw").classList.remove("d-none");
         currentShape = " ";
     } else {
-        currentShape = shapes[Math.floor(Math.random() * shapes.length)];
-        element.textContent = "Draw " + MIN_TARGET + " " + currentShape + "(s).";
+        currentShape = getNextElement();
+        let remaining = MIN_TARGET - (counterMap[currentShape] % 5);
+        element.textContent = "Draw " + MIN_TARGET + " " + currentShape + "(s)" + "    remaining(" + remaining + ")";
     }
+
+    markCompletedElement();
 }
 
 function redrawElement(){
@@ -247,13 +264,14 @@ function storeImage(dataURL) {
             shape: currentShape,
             touchlines: touchLines
         },
-        success: function (success) {
-            if (success) {
+        success: function (response) {
+            response = JSON.parse(response);
+            if (response["success"]) {
                 if (currentShape === " ") return;
+                totalFiles = response.count;
                 let element = document.getElementById(currentShape);
-                let counter = counterMap[currentShape];
                 if (element) {
-                    counterMap[currentShape] = counter + 1;
+                    counterMap[currentShape]++;
                     element.textContent = counterMap[currentShape];
                 }
 
@@ -264,13 +282,8 @@ function storeImage(dataURL) {
                         parentElement.classList.remove("bg-primary");
                         parentElement.classList.add("bg-success");
                     }
-                    delete counterMap[currentShape];
-                    GenerateInstruction();
                 }
-                else if((counterMap[currentShape] === MIN_TARGET) ||
-                    ((counterMap[currentShape] > MIN_TARGET) && (counterMap[currentShape] % MIN_TARGET) === 0)){
-                    GenerateInstruction();
-                }
+                GenerateInstruction();
             }
         },
         error: function (error) {
@@ -281,6 +294,7 @@ function storeImage(dataURL) {
 
 // save Image
 function saveImage(canvas, canvasContext) {
+    if(totalFiles === FINAL_TARGET) return;
     const setX = new Set();
     const setY = new Set();
     if (touchLines.length === 0) return;

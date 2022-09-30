@@ -1,13 +1,7 @@
 <?php include("./php/header.php"); ?>
+<?php include("./php/file_utils.php"); ?>
 <script type="text/javascript">
     <?php
-
-    function countFilesPerCategory($category)
-    {
-        $userName = $_SESSION['userName'];
-        return count(glob("./storage/{$userName}/{$category}/" . "*.png"));
-    }
-
     session_start();
     if (!isset($_SESSION['userName'])) {
         header('Location:./index.php');
@@ -15,7 +9,16 @@
     $target = 50;
     $name = $_SESSION['userName'];
     ?>
+
+    let totalFiles = <?php echo countFiles() ?>;
+    let counterMap = {};
+    counterMap["rectangle"] = <?php echo countFilesPerCategory("rectangle") ?>;
+    counterMap["reference"] = <?php echo countFilesPerCategory("reference") ?>;
+    counterMap["inheritance"] = <?php echo countFilesPerCategory("inheritance") ?>;
+    counterMap["composition"] = <?php echo countFilesPerCategory("composition") ?>;
+    counterMap["attribute"] = <?php echo countFilesPerCategory("attribute") ?>;
     let target = '<?php echo $target ?>';
+
 </script>
 <script src="./js/sketchpad.js" type="text/javascript"></script>
 <div class="container-fluid">

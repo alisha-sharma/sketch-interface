@@ -1,4 +1,5 @@
 <?php
+include("./file_utils.php");
 const UPLOAD_DIR = '../storage/';
 session_start();
 function storeImage()
@@ -17,9 +18,13 @@ function storeImage()
         $fileName = uniqid() . '.png';
         $filePath = $userSpecificFolder . "/" . $fileName;
         $success = file_put_contents($filePath, $fileData);
-        if ($success !== false) echo true;
-        else echo false;
-    } else echo false;
+        if ($success !== false) sendResult(true);
+        else sendResult(false);
+    } else sendResult(false);
+}
+
+function sendResult($success){
+    echo json_encode(["success"=> $success, "count" => countFiles("../storage")]);
 }
 
 function storePixels()
