@@ -95,7 +95,7 @@ function GenerateInstruction() {
     } else {
         currentShape = getNextElement();
         let remaining = MIN_TARGET - (counterMap[currentShape] % 5);
-        element.textContent = "Draw " + MIN_TARGET + " " + currentShape + "(s)" + "    remaining(" + remaining + ")";
+        element.textContent = "Draw a " + currentShape + "    [remaining:" + remaining + "]";
     }
 
     markCompletedElement();
