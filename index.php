@@ -44,10 +44,10 @@
                         <input type="hidden" name="_method" value="PUT">
                         <form class="form" id="userDetail" action="" method="post" accept-charset="UTF-8">
                             <div class="form-group mt-2">
-                                <label class="control-label">Name *</label>
+                                <label class="control-label">Name * (only alphabets, numbers and underscore are allowed) </label>
                                 <div>
                                     <input type="text" class="form-control input-lg"
-                                           name="name" id="name" required>
+                                           name="name" id="name" pattern="[a-zA-Z0-9_]*" required>
                                 </div>
                             </div>
                             <div class="form-group mt-2">

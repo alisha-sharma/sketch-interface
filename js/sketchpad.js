@@ -9,6 +9,7 @@ const OUT_SIZE = 256;
 const PADDING = 8;
 let shapes = []
 let currentShape = "";
+let previousShape = "";
 let MIN_TARGET = 5;
 let FINAL_TARGET = 250;
 
@@ -84,6 +85,12 @@ function markCompletedElement() {
     });
 }
 
+function generateToastMessage() {
+    var x = document.getElementById("toastMessage");
+    x.className = "show";
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
 function GenerateInstruction() {
     let element = document.getElementById("shape");
     if (totalFiles === FINAL_TARGET) {
@@ -96,6 +103,8 @@ function GenerateInstruction() {
         currentShape = getNextElement();
         let remaining = MIN_TARGET - (counterMap[currentShape] % 5);
         element.textContent = "Draw a " + currentShape + "    [remaining:" + remaining + "]";
+        if(currentShape !== previousShape && previousShape.length !== 0) generateToastMessage();
+        previousShape = currentShape;
     }
 
     markCompletedElement();

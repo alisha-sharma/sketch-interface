@@ -34,6 +34,7 @@
         You can draw UML class diagram elements like rectangles and arrows on the sketchpad and save them.
         The image data of the UML class diagram component will be used as training data for the sketch classifier.
     </div>
+    <div id="toastMessage">Reminder!! Drawing instruction has been changed.</div>
     <div class="row" id="sketch">
         <div class="row col-7 left-side " id="instructions">
             <div class="col-md-5 offset-md-2">
