@@ -1,5 +1,9 @@
 <?php include("./php/header.php"); ?>
 <?php include("./php/file_utils.php"); ?>
+<?php //header('Access-Control-Allow-Origin: *'); ?>
+<script src=
+        "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.5.2/dist/tf.min.js">
+</script>
 <script type="text/javascript">
     <?php
     session_start();

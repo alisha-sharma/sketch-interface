@@ -264,41 +264,55 @@ function clearCanvas(canvas, canvasContext) {
     touchLines = [];
 }
 
+isStore = false;
 function storeImage(dataURL) {
-    $.ajax({
-        type: "POST",
-        url: "./php/store.php",
-        data: {
-            imgBase64: dataURL,
-            shape: currentShape,
-            touchlines: touchLines
-        },
-        success: function (response) {
-            response = JSON.parse(response);
-            if (response["success"]) {
-                if (currentShape === " ") return;
-                totalFiles = response.count;
-                let element = document.getElementById(currentShape);
-                if (element) {
-                    counterMap[currentShape]++;
-                    element.textContent = counterMap[currentShape];
-                }
-
-                clearCanvas(canvas, canvasContext);
-                if (counterMap[currentShape] === parseInt(target)) {
-                    let parentElement = element.closest(".bg-primary");
-                    if (parentElement) {
-                        parentElement.classList.remove("bg-primary");
-                        parentElement.classList.add("bg-success");
-                    }
-                }
-                GenerateInstruction();
+    if (!isStore) {
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:3000/imageClassification",
+            data: {
+                image: dataURL,
+            },
+            success: function (response) {
+                console.log(response);
             }
-        },
-        error: function (error) {
-            alert(error);
-        }
-    });
+        });
+    } else {
+        $.ajax({
+            type: "POST",
+            url: "./php/store.php",
+            data: {
+                imgBase64: dataURL,
+                shape: currentShape,
+                touchlines: touchLines
+            },
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response["success"]) {
+                    if (currentShape === " ") return;
+                    totalFiles = response.count;
+                    let element = document.getElementById(currentShape);
+                    if (element) {
+                        counterMap[currentShape]++;
+                        element.textContent = counterMap[currentShape];
+                    }
+
+                    clearCanvas(canvas, canvasContext);
+                    if (counterMap[currentShape] === parseInt(target)) {
+                        let parentElement = element.closest(".bg-primary");
+                        if (parentElement) {
+                            parentElement.classList.remove("bg-primary");
+                            parentElement.classList.add("bg-success");
+                        }
+                    }
+                    GenerateInstruction();
+                }
+            },
+            error: function (error) {
+                alert(error);
+            }
+        });
+    }
 }
 
 // save Image
@@ -356,7 +370,7 @@ function saveImage(canvas, canvasContext) {
         // drawImage the img on the canvas
         myContext.drawImage(img, xOffset + PADDING, yOffset + PADDING, newWidth - PADDING * 2, newHeight - PADDING * 2);
         let dataURL = myCanvas.toDataURL();
-        storeImage(dataURL);
+         storeImage(dataURL);
     }
 }
 
